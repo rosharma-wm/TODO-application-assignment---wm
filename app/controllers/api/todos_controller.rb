@@ -1,14 +1,16 @@
 class Api::TodosController < ApplicationController
   def create
-    tr= Todo.create(title: params[:title],description: params[:description],tags: params[:tags]) 
-    render json: tr 
+    @tr = Todo.create(title: params[:title],description: params[:description],tags: params[:tags],status: params[:status]) 
+    render json: @tr 
   end
   
   def update
-    tr = Todo.find_by(id: params[:id])
-    if tr
-      tr.update(title: params[:title],description: params[:description],tags: params[:tags])
-      render json: tr 
+    @tr = Todo.find_by(id: params[:id])
+    
+    if @tr
+      @tr.update(title: params[:title],description: params[:description],tags: params[:tags],status: params[:status])
+      render json: @tr 
+      
     else
       render json: {
         message:"id you enter does not exist"
@@ -17,8 +19,13 @@ class Api::TodosController < ApplicationController
   end
 
   def index
-    @tr = Todo.all
-    render json: @tr
+    if params[:tags].present?
+      @tr = Todo.where(tags: { '$in': [params[:tags]]}).order_by(created_at: :desc)
+      render json: @tr
+    else
+      @tr = Todo.all
+      render json: @tr
+    end
   end
 
   def show
@@ -39,18 +46,26 @@ class Api::TodosController < ApplicationController
         message: "destroyed"
         }
   end
-
+# //test comment
   def edit
+    @tr
   end
 
   def new
   end
-  private 
-  def anti_params
-    params.require(:todo).permit([
-      :title,
-      :description,
-      :tags
-    ])
+  def restore
+   
+    @tr=Todo.unscoped.find(params[:id])
+    # if @tr.restore
+    #   render json: {
+    #     success: "restored"
+    #     }
+    # else
+    #   render json{
+    #     unsuccess:"cant restored the give value"
+    #   }
+    # end
   end
+ 
+
 end
