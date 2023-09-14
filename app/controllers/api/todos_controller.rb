@@ -46,25 +46,17 @@ class Api::TodosController < ApplicationController
         message: "destroyed"
         }
   end
-# //test comment
-  def edit
-    @tr
-  end
-
-  def new
-  end
   def restore
-   
     @tr=Todo.unscoped.find(params[:id])
-    # if @tr.restore
-    #   render json: {
-    #     success: "restored"
-    #     }
-    # else
-    #   render json{
-    #     unsuccess:"cant restored the give value"
-    #   }
-    # end
+    if @tr.restore
+      render json: {
+        success: "restored"
+        }
+    else
+      render json{
+        unsuccess:"cant restored the give value"
+      }
+    end
   end
  
 
